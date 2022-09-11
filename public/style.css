@@ -46,6 +46,10 @@ to this section's matching END comment to see page-specific styles.
 	font-size: 25px;
 }
 
+.small-cell:hover {
+	background-color: aqua;
+}
+
 .big-cell {
 	
 	font-size: 80px;
