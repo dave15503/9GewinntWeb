@@ -24,7 +24,7 @@ class Game {
 		}
 
 		this.Player0 = ownerId
-		this.Player1 = 0
+		this.Player1 = -1
 		this.CurrentPlayer = ownerId;
 		this.Winner = 0
 	}
@@ -38,12 +38,13 @@ class Game {
 		}
 
 		// test if the field is already set
-		if (this.gameGrid[x][z] !== 0) {
+		if (this.gameGrid[x][y] !== 0) {
 			return false
 		}
 		// test if the big field here is already blocking
-		let bigX = x / 3;
-		let bigY = y / 3;
+		let bigX = Math.floor(x / 3);
+		let bigY = Math.floor(y / 3);
+		console.log(this.bigGrid)
 		if (this.bigGrid[bigX][bigY] !== 0) {
 			return false
 		}
@@ -61,6 +62,7 @@ class Game {
 		else {
 			this.CurrentPlayer = this.Player1
 		}
+		return true
 
 	}
 
@@ -184,7 +186,7 @@ class GameState {
 			return false
 		}
 		// check if player2 spot is still empty
-		if (this.Games[gameId].Player1 === 0) {
+		if (this.Games[gameId].Player1 === -1) {
 			this.Games[gameId].Player1 = playerId
 			return true
 		}
@@ -196,16 +198,18 @@ class GameState {
 		// Can only play if: Game is owned, has already started, and the player
 		// moving is the currently active player
 		if (!this.checkOwnership(gameId, playerId)) {
+			console.log('Ownership violation')
 			return false
 		}
 		let game = this.Games[gameId]
 		if (game.Player1 === -1 || game.CurrentPlayer !== playerId) {
 			// Game not yet ready or the player is not allowed
+			console.log('Player not allowed to move')
 			return false
 		}
 
 		// Player can place a mark!
-		return this.Games[gameId].markCell(x, y, playerId)
+		return this.Games[gameId].setCell(x, y, playerId)
 	}
 
 	static checkOwnership(gameId, playerId) {
@@ -214,7 +218,7 @@ class GameState {
 			return false
 		}
 		let game = this.Games[gameId]
-		if (game.Player0 !== playerId || game.Player1 !== playerId) {
+		if (game.Player0 !== playerId && game.Player1 !== playerId) {
 			// Access denied
 			return false
 		}

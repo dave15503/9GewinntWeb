@@ -58,29 +58,47 @@ io.on('connection', (socket) => {
 			socket.join(String(gameId))
 			broadcastGame(gameId)
 		}
+		else {
+			console.log('failed to enter game')
+		}
 	})
 
 	socket.on('try-reconnect', (msg) => {
 		let payload = JSON.parse(msg)
 		let pId = parseInt(payload.pId)
+		let found = false
 		for (let i = 0; i < GameState.OpenGameIds.length; i++) {
 			let game = GameState.Games[GameState.OpenGameIds[i]]
 			if (game.Player0 === pId || game.Player1 === pId) {
 				let gameId = game.GameId
 				socket.join(String(gameId))
 				broadcastGame(gameId)
-				return
+				found = true
+				break
 			}
 		}
+		if(!found){
+			// The player is in no game, send command to wipe the cookies
+			// and start a new session
+			// this should be a failsafe for when the backend crashes but the users
+			// still think they are logged in.
+			socket.emit('reconnect-failed', JSON.stringify({pId: pId}))
+
+		}
+
 	})
 
 	socket.on('place', (msg) => {
 		let payload = JSON.parse(msg)
 		let pId = parseInt(payload.pId)
 		let gameId = parseInt(payload.gameId)
+		console.log(payload)
 		if (GameState.makeMove(payload.x, payload.y, gameId, pId)) {
 			// successfully entered, send the gamestate
 			broadcastGame(gameId)
+		}
+		else {
+			console.log('Error setting this cell')
 		}
 	})
 

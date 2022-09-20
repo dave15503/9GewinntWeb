@@ -57,6 +57,8 @@ function AppView() {
 
 	const tkEditor = useRef()
 
+
+
 	socket.on('registered', (msg) => {
 		let payload = JSON.parse(msg)
 		Cookies.remove('pId')
@@ -71,6 +73,17 @@ function AppView() {
 		let payload = JSON.parse(msg)
 		console.log(payload)
 		setGameState(payload)
+	})
+
+	
+	socket.on('reconnect-failed', (msg) => {
+		// when reconnecting failed, remove cookies and try to register anew
+		let payload = JSON.parse(msg)
+		if (payload.pId === pId) {
+			Cookies.remove('pId')
+			Cookies.remove('sId')
+			socket.emit('register')
+		}
 	})
 
 	if (pId == null || pId === 'undefined') {
@@ -109,7 +122,8 @@ function AppView() {
 	}
 
 	const onCellClick = (x, y) => {
-		let payload = {x:x, y:y, pId: pId, gameId: gamestate.GameId}
+		console.log('Cell click at (' + x + '/' + y + ')')
+		let payload = { x: x, y: y, pId: pId, gameId: gamestate.GameId }
 		socket.emit('place', JSON.stringify(payload))
 	}
 
@@ -132,7 +146,7 @@ function AppView() {
 
 		for (let i = 0; i < 3; i++) {
 			for (let j = 0; j < 3; j++) {
-					cells.push(<BigGridCell x={i} y={j} state={gamestate.bigGrid[i][j]}></BigGridCell>)
+				cells.push(<BigGridCell x={i} y={j} state={gamestate.bigGrid[i][j]}></BigGridCell>)
 			}
 		}
 
