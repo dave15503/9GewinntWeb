@@ -49,7 +49,7 @@ function AppView() {
 	var socket = io()
 
 	// will save the userId in a cookie.
-	// when there is none we need to connect to the socket to get one	
+	// when there is none we need to connect to the socket to get one
 	let pId = Cookies.get('pId')
 	let sId = Cookies.get('sId')
 
@@ -75,7 +75,7 @@ function AppView() {
 		setGameState(payload)
 	})
 
-	
+
 	socket.on('reconnect-failed', (msg) => {
 		// when reconnecting failed, remove cookies and try to register anew
 		let payload = JSON.parse(msg)
@@ -154,32 +154,57 @@ function AppView() {
 
 	}
 
-	return <div>
-		<h1>9 Gewinnt</h1>
+	const leaveGame = () => {
+		console.log('Leave called')
+		let payload = { pId: pId, gameId: gamestate.GameId }
+		socket.emit('leave-game', JSON.stringify(payload))
+	}
+
+	return <div className='main-view'>
+		<h1 id='headline'>9 Gewinnt</h1>
 
 		{
 			gamestate == null ?
-				<div>
-					<div>
-						<button onClick={() => onStartGame()}>Start new Game</button>
+				<React.Fragment>
+					<button onClick={() => onStartGame()}>Start new Game</button>
+
+					<div className="enter-form">
+						<textarea ref={tkEditor} spellCheck="false" placeholder='enter GameId...'></textarea>
+						<button onClick={() => onEnterGame()}>Enter Game</button>
 					</div>
 
-					<div>
-						<textarea ref={tkEditor}></textarea><button onClick={() => onEnterGame()}>Enter Game</button>
-					</div>
-
-
-				</div>
-				: <div>
+				</React.Fragment>
+				: <React.Fragment>
 					<h2>Currently in Game {gamestate.GameId}</h2>
+					<span className='horizontal-line'></span>
+					{
+						gamestate.Player1 === -1 ? <React.Fragment>
+							<div>
+								Waiting for Player to join
+							</div>
+							<button>
+								Let the AI take over. (Not implemented yet)
+							</button>
+						</React.Fragment>
+						: ''
+					}
+					<span className='horizontal-line'></span>
+					{
+						gamestate.Winner !== -1 ? <div>
+							Game Over; Winner: {gamestate.Winner === 1 ? "X" :"◯"}
+						</div> : <div>
+							Game in Progress
+						</div>
+					}
 					<div>Currently moving: {gamestate.CurrentPlayer === pId ? 'You' : 'Enemy'}</div>
-					<button>Leave Game</button>
-				</div>
+					<button onClick={() => leaveGame()}>Leave Game</button>
+					<span className='horizontal-line'></span>
+				</React.Fragment>
 		}
 
 		{
 			gamestate == null ?
-				<div>Join a game</div>
+				''
 				:
 				<div className='game-grid'>
 					{renderBigGrid()}

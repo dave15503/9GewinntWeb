@@ -1,5 +1,7 @@
 // Static class that holds all open sessions
 
+const e = require("express")
+
 class Game {
 
 	GameId
@@ -26,7 +28,7 @@ class Game {
 		this.Player0 = ownerId
 		this.Player1 = -1
 		this.CurrentPlayer = ownerId;
-		this.Winner = 0
+		this.Winner = -1
 	}
 
 	setCell(x, y, playerId) {
@@ -77,7 +79,7 @@ class Game {
 
 	checkSmallGrid(x, y) {
 		// x and y the top left coordinates
-		let winner = 0;
+		let winner = -1;
 		for(let i = 0; i < 3; i++) {
 			// row equal?
 			if(this.tripleEqual(this.gameGrid[x + i][y], this.gameGrid[x + i][y + 1],this.gameGrid[x + i][y+ 2])){
@@ -163,7 +165,7 @@ class GameState {
 		}
 
 		// Game exists and the player owns it
-		return game
+		return this.Games[gameId]
 	}
 
 	// Creates a new game Instance owned by the player, return the games' Id and an invitation token
@@ -194,6 +196,18 @@ class GameState {
 
 	}
 
+	static leaveGame(gameId, playerId) {
+		if(!this.checkOwnership(gameId, playerId)){
+			return false
+		}
+
+		let game = this.Games[gameId]
+		this.OpenGameIds = this.OpenGameIds.filter((gid) => gid != gameId)
+		delete this.Games[gameId]
+		return true
+
+	}
+
 	static makeMove(x, y, gameId, playerId) {
 		// Can only play if: Game is owned, has already started, and the player
 		// moving is the currently active player
@@ -207,7 +221,10 @@ class GameState {
 			console.log('Player not allowed to move')
 			return false
 		}
-
+		if(game.Winner > 0) {
+			console.log('game is over, no more placing!')
+			return false
+		}
 		// Player can place a mark!
 		return this.Games[gameId].setCell(x, y, playerId)
 	}

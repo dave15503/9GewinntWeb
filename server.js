@@ -88,6 +88,19 @@ io.on('connection', (socket) => {
 
 	})
 
+	socket.on('leave-game', (msg) => {
+		let payload = JSON.parse(msg)
+		let pId = parseInt(payload.pId)
+		let gameId = parseInt(payload.gameId)
+		// if the player is the owner, delete the game
+		// if the player only joined, just remove him from the game
+		if(GameState.leaveGame(gameId, pId)){
+			// remove the socket from the room
+			io.to(String(gameId)).emit('game-state', JSON.stringify(null))
+			io.in(String(gameId)).socketsLeave(String(gameId))
+		}
+	})
+
 	socket.on('place', (msg) => {
 		let payload = JSON.parse(msg)
 		let pId = parseInt(payload.pId)
