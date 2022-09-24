@@ -40,14 +40,14 @@ class Game {
 		}
 
 		// test if the field is already set
-		if (this.gameGrid[x][y] !== 0) {
+		if (this.gameGrid[x][y] > 0) {
 			return false
 		}
 		// test if the big field here is already blocking
 		let bigX = Math.floor(x / 3);
 		let bigY = Math.floor(y / 3);
 		console.log(this.bigGrid)
-		if (this.bigGrid[bigX][bigY] !== 0) {
+		if (this.bigGrid[bigX][bigY] > 0) {
 			return false
 		}
 
@@ -79,7 +79,7 @@ class Game {
 
 	checkSmallGrid(x, y) {
 		// x and y the top left coordinates
-		let winner = -1;
+		let winner = 0;
 		for(let i = 0; i < 3; i++) {
 			// row equal?
 			if(this.tripleEqual(this.gameGrid[x + i][y], this.gameGrid[x + i][y + 1],this.gameGrid[x + i][y+ 2])){
