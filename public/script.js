@@ -190,7 +190,7 @@ function AppView() {
 					}
 					<span className='horizontal-line'></span>
 					{
-						gamestate.Winner !== -1 ? <div>
+						gamestate.Winner > 0 ? <div>
 							Game Over; Winner: {gamestate.Winner === 1 ? "X" :"◯"}
 						</div> : <div>
 							Game in Progress
