@@ -1,0 +1,118 @@
+/******************************************************************************
+START Glitch hello-app default styles
+
+The styles in this section do some minimal CSS resets, set default fonts and
+colors, and handle the layout for our footer and "Remix on Glitch" button. If
+you're new to CSS they may seem a little complicated, but you can scroll down
+to this section's matching END comment to see page-specific styles.
+******************************************************************************/
+/* Our default values set as CSS variables */
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300&display=swap');
+:root {
+	--color-bg: #BDC9FF;
+	--color-text-main: #000000;
+	--color-primary: #AFECE0;
+	--wrapper-height: 87vh;
+	--image-max-width: 300px;
+	--image-margin: 3rem;
+}
+
+/* Basic page style resets */
+* {
+	box-sizing: border-box;
+}
+
+body{
+	display: flex;
+	justify-content: center;
+	background-color: white;
+	margin: 0px;
+	font-family: 'Open Sans', sans-serif;
+}
+
+#root {
+	width: 400px;
+	height: 100vh;
+	background-color: #ffa34d;
+	padding: 5px;
+}
+
+.main-view{
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 5px;
+}
+
+.main-view > * {
+	text-align: center;
+}
+
+.main-view > button {
+	margin-left: auto;
+	margin-right: auto;
+
+
+}
+
+button {
+	background-color: transparent;
+	padding: 4px;
+}
+
+.enter-form{
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-items: center;
+}
+
+.enter-form > textarea {
+	flex-grow: 1000;
+	overflow: hidden;
+	resize: none;
+	height: 1.5rem;
+	background-color: transparent;
+	border: 2px black solid;
+}
+
+.horizontal-line{
+	height: 0px;
+	width: 100%;
+	border-bottom: black solid 2px;
+}
+
+
+
+.game-grid {
+	margin: auto;
+	display: grid;
+	gap: 0px;
+	justify-items: stretch;
+	align-items: stretch;
+	grid-template-columns: repeat(9, 30px);
+	grid-template-rows: repeat(9, 30px);
+
+}
+
+.small-cell {
+	padding: auto;
+	background-color: transparent;
+	border-radius: 0px;
+	border: 1px solid gray;
+	text-align: center;
+	font-size: 25px;
+}
+
+.small-cell:hover {
+	border: red 1px solid;
+}
+
+.big-cell {
+
+	font-size: 80px;
+	background-color: transparent;
+	border-radius: 0px;
+	border: 2px solid black;
+	text-align: center;
+}
