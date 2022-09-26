@@ -4,9 +4,14 @@ const { useState, useRef } = React
 function GridCell({ state, onClick, x, y }) {
 	let sign = "";
 	if (state == 1) {
-		sign = "X";
+		sign = (<svg height='28' width='28'>
+			<line x1='0' y1='0' x2='28' y2='28' stroke='black' stroke-width='1'></line>
+			<line x1='28' y1='0' x2='0' y2='28' stroke='black' stroke-width='1'></line>
+		</svg>);// x
 	} else if (state == 2) {
-		sign = "◯";
+		sign = (<svg height='28' width='28'>
+			<circle cx='14' cy='14' r='10' fill='transparent' stroke='black' stroke-width='1'></circle>
+		</svg>);// o
 	}
 
 	return (
@@ -22,20 +27,25 @@ function GridCell({ state, onClick, x, y }) {
 	);
 }
 
-function BigGridCell({ x, y, state }) {
+function BigGridCell({ x, y, state, isForcing }) {
 
 	let sign = "";
 	if (state == 1) {
-		sign = "X";
+		sign = (<svg height='86' width='86'>
+			<line x1='0' y1='0' x2='86' y2='86' stroke='black' stroke-width='5'></line>
+			<line x1='86' y1='0' x2='0' y2='86' stroke='black' stroke-width='5'></line>
+		</svg>);// x
 	} else if (state == 2) {
-		sign = "◯";
+		sign = (<svg height='86' width='86'>
+			<circle cx='43' cy='43' r='40' fill='transparent' stroke='black' stroke-width='5'></circle>
+		</svg>);// o
 	}
 
 	const startCellX = (3 * x) + 1
 	const startCellY = (3 * y) + 1
 
 	return (<div
-		className='big-cell'
+		className={'big-cell ' + (isForcing ? ' highlighted' : '')}
 		style={{
 			gridColumn: startCellX + "/" + (startCellX + 3),
 			gridRow: startCellY + "/" + (startCellY + 3)
@@ -133,7 +143,7 @@ function AppView() {
 		for (let i = 0; i < 9; i++) {
 			for (let j = 0; j < 9; j++) {
 
-				cells.push(<GridCell x={i} y={j} state={gamestate.gameGrid[i][j]} onClick={() => onCellClick(i, j)}></GridCell>)
+				cells.push(<GridCell x={i} y={j}  state={gamestate.gameGrid[i][j]} onClick={() => onCellClick(i, j)}></GridCell>)
 			}
 		}
 
@@ -146,7 +156,9 @@ function AppView() {
 
 		for (let i = 0; i < 3; i++) {
 			for (let j = 0; j < 3; j++) {
-				cells.push(<BigGridCell x={i} y={j} state={gamestate.bigGrid[i][j]}></BigGridCell>)
+				let allowed = gamestate.CurrentPlayer === pId &&(gamestate.forceBigCell === null || (gamestate.forceBigCell[0] === i && gamestate.forceBigCell[1] === j))
+
+				cells.push(<BigGridCell x={i} y={j} isForcing={allowed} state={gamestate.bigGrid[i][j]}></BigGridCell>)
 			}
 		}
 

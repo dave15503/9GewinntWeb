@@ -58,6 +58,7 @@ body{
 button {
 	background-color: transparent;
 	padding: 4px;
+	border: solid 2px black;
 }
 
 .enter-form{
@@ -96,7 +97,7 @@ button {
 }
 
 .small-cell {
-	padding: auto;
+	padding: 0px;
 	background-color: transparent;
 	border-radius: 0px;
 	border: 1px solid gray;
@@ -115,4 +116,10 @@ button {
 	border-radius: 0px;
 	border: 2px solid black;
 	text-align: center;
+}
+
+.big-cell.highlighted {
+
+	border : 5px solid green;
+
 }

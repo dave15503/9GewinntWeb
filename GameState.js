@@ -9,9 +9,11 @@ class Game {
 	Player1
 	CurrentPlayer // Keeps track of who can move next
 	Winner
+	
 
 	gameGrid;
 	bigGrid;
+	forceBigCell;
 
 	constructor(ownerId) {
 		this.GameId = 0
@@ -29,6 +31,7 @@ class Game {
 		this.Player1 = -1
 		this.CurrentPlayer = ownerId;
 		this.Winner = -1
+		this.forceBigCell = null
 	}
 
 	setCell(x, y, playerId) {
@@ -39,14 +42,23 @@ class Game {
 			mark = 2
 		}
 
+		// test if it is allowed to place in this bigCell
+
 		// test if the field is already set
 		if (this.gameGrid[x][y] > 0) {
 			return false
 		}
-		// test if the big field here is already blocking
+
+		
 		let bigX = Math.floor(x / 3);
 		let bigY = Math.floor(y / 3);
-		console.log(this.bigGrid)
+		
+		// test if it is allowed to place in this bigCell
+		if(this.forceBigCell != null) {
+			if(this.forceBigCell[0] !== bigX || this.forceBigCell[1] !== bigY) return false
+		}
+
+		// test if the big field here is already blocking
 		if (this.bigGrid[bigX][bigY] > 0) {
 			return false
 		}
@@ -64,6 +76,18 @@ class Game {
 		else {
 			this.CurrentPlayer = this.Player1
 		}
+
+		// after successfully setting the cell, set the next forced big cell
+		let nx = x - (bigX * 3)
+		let ny = y - (bigY * 3)
+		// if it were to be blocked by a won grid, allow all again
+		if(this.bigGrid[nx][ny] > 0){
+			this.forceBigCell = null
+		}
+		else{
+			this.forceBigCell = [nx, ny]
+		}
+		
 		return true
 
 	}
